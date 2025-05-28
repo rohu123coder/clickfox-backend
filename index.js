@@ -1,11 +1,19 @@
 const express = require("express");
 const axios = require("axios");
 require("dotenv").config();
+
 const app = express();
 app.use(express.json());
 
+// ✅ Home route to show it's working
+app.get("/", (req, res) => {
+  res.send("Click Fox API is running 🚀");
+});
+
+// ✅ WhatsApp API route
 app.post("/send-message", async (req, res) => {
   const { to, message } = req.body;
+
   try {
     const response = await axios.post(
       `https://graph.facebook.com/v19.0/${process.env.PHONE_NUMBER_ID}/messages`,
@@ -22,16 +30,14 @@ app.post("/send-message", async (req, res) => {
         }
       }
     );
+
     res.json(response.data);
   } catch (err) {
     console.error(err.response?.data || err.message);
-    res.status(500).send(err.response?.data || "Error");
+    res.status(500).send(err.response?.data || "Something went wrong");
   }
 });
 
+// ✅ Port listener
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-app.get('/', (req, res) => {
-  res.send('Click Fox API is running 🚀');
-});
-
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
